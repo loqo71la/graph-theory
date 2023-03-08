@@ -1,0 +1,32 @@
+name: Coverage
+
+on:
+  pull_request:
+    branches: 
+      - main
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Java SDK
+        uses: actions/setup-java@v3.4.0
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install dependencies
+        run: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+
+      - name: Generate coverage report
+        run: mvn -B test
+      
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
